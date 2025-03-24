@@ -55,6 +55,18 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+static int cmd_si(char *args);
+
+static int cmd_info(char *args);
+
+static int cmd_x(char *args);
+
+static int cmd_p(char *args);
+
+static int cmd_w(char *args);
+
+static int cmd_d(char *args);
+
 static struct {
   const char *name;
   const char *description;
@@ -63,6 +75,12 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  { "si", "Single-step execute N instructions (default 1)", cmd_si },                                                                                                             
+  { "info", "Print program status: 'info r' for registers, 'info w' for watchpoints", cmd_info },
+  { "x", "Print N 4-byte values starting at address EXPR", cmd_x },
+  { "p", "Evaluate and print the value of expression EXPR", cmd_p },
+  { "w", "Set a watchpoint", cmd_w },
+  { "d", "Delete a watchpoit with the given number", cmd_d },
 
   /* TODO: Add more commands */
 
@@ -90,6 +108,35 @@ static int cmd_help(char *args) {
     }
     printf("Unknown command '%s'\n", arg);
   }
+  return 0;
+}
+static int cmd_si(char *args) {
+  cpu_exec(-1);
+  return 0;
+}
+
+static int cmd_info(char *args) {
+  cpu_exec(-1);
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  cpu_exec(-1);
+  return 0;
+}
+
+static int cmd_p(char *args) {
+  cpu_exec(-1);
+  return 0;
+}
+
+static int cmd_w(char *args) {
+  cpu_exec(-1);
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  cpu_exec(-1);
   return 0;
 }
 
