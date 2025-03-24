@@ -13,6 +13,8 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include <errno.h>
+#include <limits.h>
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <readline/readline.h>
@@ -110,8 +112,29 @@ static int cmd_help(char *args) {
   }
   return 0;
 }
+
 static int cmd_si(char *args) {
-  cpu_exec(-1);
+	char *arg = strtok(args, " ");
+  int steps = 1;  // 默认步数为1
+
+  if (arg) {
+    char *endptr;
+    errno = 0;
+    long val = strtol(arg, &endptr, 10);
+
+    if (errno != 0 || *endptr != '\0' || val <= 0 || val > INT_MAX) {
+      printf("Invalid argument '%s'. Usage: si [N]\n", arg);
+        return 0;
+      }
+      steps = (int)val;
+    }
+
+    if (strtok(NULL, " ") != NULL) {
+        printf("Error: Extra argument. Usage: si [N]\n");
+        return 0;
+    }
+
+  cpu_exec(steps);
   return 0;
 }
 
