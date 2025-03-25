@@ -21,6 +21,7 @@
 #include <readline/history.h>
 #include "sdb.h"
 
+
 static int is_batch_mode = false;
 
 void init_regex();
@@ -139,7 +140,30 @@ static int cmd_si(char *args) {
 }
 
 static int cmd_info(char *args) {
-  cpu_exec(-1);
+	char *arg = strtok(args, " ");
+
+	if (arg == NULL) {
+		printf("Error: Required parameter is missing or invalid. Usage:info w or info r.\n");
+		return 0;
+	} 
+	else if (strcmp(arg, "w") == 0) {
+		// printf(" ");
+		return 0;
+	} 
+	else if (strcmp(arg, "r") == 0) {
+		isa_reg_display();
+		return 0;
+		}
+	else {
+		printf("Error: Required parameter is missing or invalid. Usage:info w or info r.\n");
+		return 0;
+	}
+	
+	if (strtok(NULL, " ") != NULL) {
+    printf("Error: Extra argument. Usage:info w or info r\n");
+		return 0;
+	}
+
   return 0;
 }
 
