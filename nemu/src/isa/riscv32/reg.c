@@ -33,7 +33,7 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
- // PC寄存器特殊高亮
+	// PC寄存器
   printf(COLOR_PC "PC" COLOR_RESET "\t0x%08x\t%u\n", cpu.pc, cpu.pc);
 
   for (int i = 0; i < (sizeof(regs)/sizeof(regs[0])); i++) {
@@ -60,7 +60,9 @@ word_t isa_reg_str2val(const char *s, bool *success) {
 	if (name[0] == '$') name++;
 
 	for (int i = 0; i < (sizeof(regs)/sizeof(regs[0])); i++) {
-		if (strcmp(name, regs[i] + 1) == 0) {  // 比较寄存器名，跳过$前缀
+		const char *reg_name = regs[i];
+		if (reg_name[0] == '$') reg_name++;
+		if (strcmp(name, reg_name)) { 
 			*success = true;
 			return cpu.gpr[i];
 		}

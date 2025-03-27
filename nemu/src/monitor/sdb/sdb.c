@@ -115,7 +115,7 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
-	char *arg = strtok(args, " ");
+	char *arg = strtok(NULL , " ");
   int steps = 1;  // 默认步数为1
 
   if (arg) {
@@ -143,32 +143,79 @@ static int cmd_info(char *args) {
 	char *arg = strtok(args, " ");
 
 	if (arg == NULL) {
-		printf("Error: Required parameter is missing or invalid. Usage:info w or info r.\n");
-		return 0;
-	} 
-	else if (strcmp(arg, "w") == 0) {
-		// printf(" ");
-		return 0;
-	} 
-	else if (strcmp(arg, "r") == 0) {
-		isa_reg_display();
-		return 0;
-		}
-	else {
-		printf("Error: Required parameter is missing or invalid. Usage:info w or info r.\n");
+    printf("Error: Missing subcommand. Usage: info w or info r\n");
+    return 0;
+  }
+
+	 if (strtok(NULL, " ") != NULL) {
+    printf("Error: Too many arguments. Usage: info w or info r\n");
+    return 0;
+  }
+
+	if (strcmp(arg, "r") == 0) {
+    isa_reg_display();
+    return 0;
+  }
+  else if (strcmp(arg, "w") == 0) {
+    // TODO: 实现watchpoint功能
+    return 0;
+  }
+  else {
+    printf("Error: Invalid subcommand '%s'. Valid options: w, r\n", arg);
+    return 0;
+  }
+	
+	return 0;
+}
+
+word_t vaddr_read(vaddr_t, int);
+
+static int cmd_x(char *args) {
+	 char *arg1 = strtok(NULL, " ");
+   char *arg2 = strtok(NULL, " ");
+
+
+	if (arg1 == NULL ||  arg2 == NULL) {
+		printf("Error: Missing arguments. Usage: x [N] EXPR\n");
 		return 0;
 	}
 	
 	if (strtok(NULL, " ") != NULL) {
-    printf("Error: Extra argument. Usage:info w or info r\n");
-		return 0;
-	}
+        printf("Error: Too many arguments. Usage: x [N] EXPR\n");
+        return 0;
+    }
+	
+	char *endptr;
+  errno = 0;
+  long count = strtol(arg1, &endptr, 10);
 
-  return 0;
-}
+  if (errno != 0 || *endptr != '\0' || count <= 0 || count > INT_MAX) {
+    printf("Error: Invalid count '%s'. Must be a positive integer\n", arg1);
+    return 0;
+  }
 
-static int cmd_x(char *args) {
-  cpu_exec(-1);
+	errno = 0;
+  vaddr_t addr = strtol(arg2, &endptr, 16);
+
+  if (errno != 0 || *endptr != '\0') {
+    printf("Error: Invalid address '%s'. Must be a hexadecimal number\n", arg2);
+    return 0;
+  }
+
+  for (int i = 0; i < count; i++) {
+    if (i % 4 == 0) {
+        printf("\033[34m0x%08x\033[0m: ", addr + i * 4);
+    }
+    uint32_t data = vaddr_read(addr + i * 4, 4);
+    printf("0x%08x ", data);
+    if (i % 4 == 3) {
+      printf("\n");
+    }
+  }
+
+  if (count % 4 != 0) {
+    printf("\n");
+  }
   return 0;
 }
 
