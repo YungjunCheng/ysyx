@@ -109,7 +109,7 @@ static int cmd_help(char *args) {
         return 0;
       }
     }
-    printf("Unknown command '%s'\n", arg);
+    printf("Error: Unknown command '%s'\n", arg);
   }
   return 0;
 }
@@ -124,7 +124,7 @@ static int cmd_si(char *args) {
     long val = strtol(arg, &endptr, 10);
 
     if (errno != 0 || *endptr != '\0' || val <= 0 || val > INT_MAX) {
-      printf("Invalid argument '%s'. Usage: si [N]\n", arg);
+      printf("Error: Invalid argument '%s'. Usage: si [N]\n", arg);
         return 0;
       }
       steps = (int)val;
@@ -220,7 +220,21 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-  cpu_exec(-1);
+ if (args == NULL || *args == '\0') {  // 检查是否有输入表达式
+    printf("Error: Missing expression. Usage: p EXPR\n");
+    return 0;
+  }
+	
+  bool success = true;
+  word_t result = expr(args, &success); // 调用表达式求值函数
+
+  if (success) {
+    printf("%u\n", result); // 输出十进制结果
+    printf("%u (0x%08x)\n", result, result);	// 输出十六进制结果
+  } else {
+    printf("Error: Invalid expression '%s'\n", args);
+  }
+	
   return 0;
 }
 
@@ -272,7 +286,7 @@ void sdb_mainloop() {
       }
     }
 
-    if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
+    if (i == NR_CMD) { printf("Error: Unknown command '%s'\n", cmd); }
   }
 }
 

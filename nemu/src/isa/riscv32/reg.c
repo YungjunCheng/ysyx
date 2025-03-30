@@ -19,8 +19,8 @@
 #define COLOR_SAVE  "\033[36m"    // 青色（保存寄存器s0-s11）
 #define COLOR_TEMP  "\033[35m"    // 洋红色（临时寄存器t0-t6）
 #define COLOR_RESET "\033[0m"     // 重置颜色
-#define COLOR_HEX		"\033[38;5;33m" // 亮蓝色 (16进制)
-#define COLOR_DEC  "\033[38;5;118m" // 亮绿色 (10进制)
+#define COLOR_HEX		"\033[38;5;33m"		// 亮蓝色 (16进制)
+#define COLOR_DEC   "\033[38;5;118m"	// 亮绿色 (10进制)
 #include <isa.h>
 #include "local-include/reg.h"
 #include <ctype.h>
@@ -36,7 +36,7 @@ void isa_reg_display() {
 	// PC寄存器
   printf(COLOR_PC "PC" COLOR_RESET "\t0x%08x\t%u\n", cpu.pc, cpu.pc);
 
-  for (int i = 0; i < (sizeof(regs)/sizeof(regs[0])); i++) {
+  for (int i = 0; i < ARRLEN(regs); i++) {
     const char* color = COLOR_RESET;
     const char* name = regs[i];
     
